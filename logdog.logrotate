@@ -1,0 +1,4 @@
+# Logdog rotating behavior
+# Mastering default -- no logrotate on cron, only Logdog
+
+

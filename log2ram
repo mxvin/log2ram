@@ -32,16 +32,12 @@ syncFromDisk () {
         umount -l $RAM_LOG/
         umount -l $HDD_LOG/
         if [ "$MAIL" = true ]; then
-            echo "LOG2RAM : No place on RAM anymore, fallback on the disk" | mail -s 'Log2Ram Error' root;
+            echo "LOG2RAM : No place on RAM anymore, fallback on the disk" | mail -s 'Log2Ram Error' $MAIL_ADDRESS;
         fi
         exit 1
     fi
-
-    if [ "$USE_RSYNC" = true ]; then
-        rsync -aXWv --delete --links $HDD_LOG/ $RAM_LOG/ 2>&1 | $LOG_OUTPUT
-    else
-        cp -rfup $HDD_LOG/ -T $RAM_LOG/ 2>&1 | $LOG_OUTPUT
-    fi
+    
+    cp -rfup $HDD_LOG/ -T $RAM_LOG/ 2>&1 | $LOG_OUTPUT
 }
 
 wait_for () {
@@ -62,17 +58,11 @@ case "$1" in
       ;;
 
   stop)
-      syncToDisk
       umount -l $RAM_LOG/
       umount -l $HDD_LOG/
       ;;
-
-  write)
-      syncToDisk
-      ;;
-
   *)
-      echo "Usage: log2ram {start|stop|write}" >&2
+      echo "Usage: log2ram {start|stop}" >&2
       exit 1
       ;;
 esac
